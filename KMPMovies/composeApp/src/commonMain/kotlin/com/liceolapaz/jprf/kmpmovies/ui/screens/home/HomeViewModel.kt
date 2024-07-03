@@ -5,25 +5,37 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.liceolapaz.jprf.kmpmovies.Movie
-import com.liceolapaz.jprf.kmpmovies.movies
-import kotlinx.coroutines.delay
+import com.liceolapaz.jprf.kmpmovies.data.Movie
+import com.liceolapaz.jprf.kmpmovies.data.MovieService
+import com.liceolapaz.jprf.kmpmovies.data.RemoteMovie
 import kotlinx.coroutines.launch
 
-class HomeViewModel: ViewModel() {
+class HomeViewModel(
+    private val movieService: MovieService
+): ViewModel() {
     var state by mutableStateOf(UIState())
         private set
 
     init {
         viewModelScope.launch {
             state = UIState(isLoading = true)
-            delay(1000)
-            state = UIState(isLoading = false, movies = movies)
+            state = UIState(
+                isLoading = false,
+                movies = movieService.getPopularMovies().results.map { it.toDomainMovie() }
+            )
         }
     }
 
     data class UIState(
         val isLoading: Boolean = false,
         val movies: List<Movie> = emptyList()
+    )
+}
+
+private fun RemoteMovie.toDomainMovie(): Movie {
+    return Movie(
+        id = id,
+        title = title,
+        poster = "https://image.tmdb.org/t/p/w500$posterPath"
     )
 }

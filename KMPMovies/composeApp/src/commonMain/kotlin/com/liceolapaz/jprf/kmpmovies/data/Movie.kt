@@ -1,4 +1,4 @@
-package com.liceolapaz.jprf.kmpmovies
+package com.liceolapaz.jprf.kmpmovies.data
 
 data class Movie(
     val id: Int,

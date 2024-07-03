@@ -1,0 +1,4 @@
+<!-- Rename this file to api_keys.xml, delete 'fake_' from string names and replace values with your API keys -->
+<resources>
+    <string name="fake_tmdb_api_key">YOUR_TMDB_API_KEY</string>
+</resources>
