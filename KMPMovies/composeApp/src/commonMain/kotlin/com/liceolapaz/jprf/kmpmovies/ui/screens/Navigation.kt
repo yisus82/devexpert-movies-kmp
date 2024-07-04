@@ -9,7 +9,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.liceolapaz.jprf.kmpmovies.data.MovieService
-import com.liceolapaz.jprf.kmpmovies.data.movies
 import com.liceolapaz.jprf.kmpmovies.ui.screens.detail.DetailScreen
 import com.liceolapaz.jprf.kmpmovies.ui.screens.home.HomeScreen
 import com.liceolapaz.jprf.kmpmovies.ui.screens.home.HomeViewModel
@@ -53,7 +52,7 @@ fun Navigation() {
         ) { backStackEntry ->
             val movieId = backStackEntry.arguments?.getInt("movieId")
             DetailScreen(
-                movie = movies.first { it.id == movieId },
+                movie = viewModel.state.movies.first { it.id == movieId },
                 onBack = { navController.popBackStack() }
             )
         }
