@@ -1,4 +1,4 @@
-package com.liceolapaz.jprf.kmpmovies.ui.screens.home
+package com.liceolapaz.jprf.kmpmovies.ui.screens.detail
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -9,24 +9,25 @@ import com.liceolapaz.jprf.kmpmovies.data.Movie
 import com.liceolapaz.jprf.kmpmovies.data.MovieRepository
 import kotlinx.coroutines.launch
 
-class HomeViewModel(
+class DetailViewModel(
+    private val movieId: Int,
     private val movieRepository: MovieRepository
-): ViewModel() {
-    var state by mutableStateOf(UIState())
+) : ViewModel() {
+    var state by mutableStateOf(UiState())
         private set
 
     init {
         viewModelScope.launch {
-            state = UIState(isLoading = true)
-            state = UIState(
+            state = UiState(isLoading = true)
+            state = UiState(
                 isLoading = false,
-                movies = movieRepository.getPopularMovies()
+                movie = movieRepository.getMovieById(movieId)
             )
         }
     }
 
-    data class UIState(
+    data class UiState(
         val isLoading: Boolean = false,
-        val movies: List<Movie> = emptyList()
+        val movie: Movie? = null
     )
 }

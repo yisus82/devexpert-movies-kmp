@@ -8,12 +8,16 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.liceolapaz.jprf.kmpmovies.data.MovieRepository
 import com.liceolapaz.jprf.kmpmovies.data.MovieService
 import com.liceolapaz.jprf.kmpmovies.ui.screens.detail.DetailScreen
+import com.liceolapaz.jprf.kmpmovies.ui.screens.detail.DetailViewModel
 import com.liceolapaz.jprf.kmpmovies.ui.screens.home.HomeScreen
 import com.liceolapaz.jprf.kmpmovies.ui.screens.home.HomeViewModel
 import io.ktor.client.HttpClient
+import io.ktor.client.plugins.DefaultRequest
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.http.URLProtocol
 import io.ktor.serialization.kotlinx.json.json
 import kmpmovies.composeapp.generated.resources.Res
 import kmpmovies.composeapp.generated.resources.tmdb_api_key
@@ -23,19 +27,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun Navigation() {
     val navController = rememberNavController()
-    val client = remember {
-        HttpClient {
-            install(ContentNegotiation) {
-                json(Json {
-                    ignoreUnknownKeys = true
-                })
-            }
-        }
-    }
-    val apiKey = stringResource(Res.string.tmdb_api_key)
-    val viewModel = viewModel {
-        HomeViewModel(MovieService(apiKey, client))
-    }
+    val movieRepository = rememberMovieRepository()
 
     NavHost(navController = navController, startDestination = "home") {
         composable("home") {
@@ -43,18 +35,39 @@ fun Navigation() {
                 onMovieClick = { movie ->
                     navController.navigate("detail/${movie.id}")
                 },
-                vm = viewModel
+                vm = HomeViewModel(movieRepository)
             )
         }
         composable(
             route = "detail/{movieId}",
             arguments = listOf(navArgument("movieId") { type = NavType.IntType })
         ) { backStackEntry ->
-            val movieId = backStackEntry.arguments?.getInt("movieId")
+            val movieId = checkNotNull(backStackEntry.arguments?.getInt("movieId"))
             DetailScreen(
-                movie = viewModel.state.movies.first { it.id == movieId },
+                vm = viewModel { DetailViewModel(movieId, movieRepository) },
                 onBack = { navController.popBackStack() }
             )
         }
     }
+}
+
+@Composable
+private fun rememberMovieRepository(
+    apiKey: String = stringResource(Res.string.tmdb_api_key)
+): MovieRepository = remember {
+    val client = HttpClient {
+        install(ContentNegotiation) {
+            json(Json {
+                ignoreUnknownKeys = true
+            })
+        }
+        install(DefaultRequest) {
+            url {
+                protocol = URLProtocol.HTTPS
+                host = "api.themoviedb.org"
+                parameters.append("api_key", apiKey)
+            }
+        }
+    }
+    MovieRepository(MovieService(client))
 }
