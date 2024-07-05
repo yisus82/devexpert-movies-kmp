@@ -47,7 +47,10 @@ fun HomeScreen(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
         ) { padding ->
             val state = vm.state
-            LoadingIndicator(isEnabled = state.isLoading)
+            LoadingIndicator(
+                isEnabled = state.isLoading,
+                modifier = Modifier.padding(padding)
+            )
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(120.dp),
                 contentPadding = PaddingValues(4.dp),
