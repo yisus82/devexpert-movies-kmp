@@ -1,12 +1,25 @@
 package com.liceolapaz.jprf.kmpmovies.data
 
-class MovieRepository(private val movieService: MovieService) {
-    suspend fun getPopularMovies(): List<Movie> {
-        return movieService.getPopularMovies().results.map { it.toDomainMovie() }
+import com.liceolapaz.jprf.kmpmovies.data.database.MovieDAO
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.onEach
+
+class MovieRepository(
+    private val movieService: MovieService,
+    private val movieDAO: MovieDAO
+) {
+    val movies : Flow<List<Movie>> = movieDAO.getPopularMovies().onEach { movies ->
+        if (movies.isEmpty()) {
+            val popularMovies = movieService.getPopularMovies().results.map { it.toDomainMovie() }
+            popularMovies.forEach { movie -> movieDAO.insertMovie(movie) }
+        }
     }
 
-    suspend fun getMovieById(movieId: Int): Movie {
-        return movieService.getMovieById(movieId).toDomainMovie()
+    suspend fun getMovieById(movieId: Int): Flow<Movie?> = movieDAO.getMovieById(movieId).onEach  { movie ->
+        if (movie == null) {
+            val domainMovie = movieService.getMovieById(movieId).toDomainMovie()
+            movieDAO.insertMovie(domainMovie)
+        }
     }
 }
 

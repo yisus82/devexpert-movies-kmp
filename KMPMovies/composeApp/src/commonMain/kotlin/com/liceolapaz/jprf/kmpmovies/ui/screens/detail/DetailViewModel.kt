@@ -19,10 +19,14 @@ class DetailViewModel(
     init {
         viewModelScope.launch {
             state = UiState(isLoading = true)
-            state = UiState(
-                isLoading = false,
-                movie = movieRepository.getMovieById(movieId)
-            )
+            movieRepository.getMovieById(movieId).collect { movie ->
+                if (movie != null) {
+                    state = UiState(
+                        isLoading = false,
+                        movie = movie
+                    )
+                }
+            }
         }
     }
 

@@ -9,6 +9,8 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import com.liceolapaz.jprf.kmpmovies.data.database.getDatabaseBuilder
+import com.liceolapaz.jprf.kmpmovies.data.database.getRoomDatabase
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,7 +18,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             EnableTransparentStatusBar()
-            App()
+            val db = getRoomDatabase(getDatabaseBuilder(ctx = LocalView.current.context))
+            App(db.movieDao())
         }
     }
 
