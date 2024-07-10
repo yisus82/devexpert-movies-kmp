@@ -8,6 +8,7 @@ import coil3.request.crossfade
 import coil3.util.DebugLogger
 import com.liceolapaz.jprf.kmpmovies.ui.screens.Navigation
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.KoinContext
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
@@ -19,7 +20,8 @@ fun App() {
             .logger(DebugLogger())
             .build()
     }
-
-    Navigation()
+    KoinContext {
+        Navigation()
+    }
 }
 
