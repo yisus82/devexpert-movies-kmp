@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.liceolapaz.jprf.kmpmovies.BuildConfig
 import com.liceolapaz.jprf.kmpmovies.data.MovieRepository
 import com.liceolapaz.jprf.kmpmovies.data.MovieService
 import com.liceolapaz.jprf.kmpmovies.data.database.MovieDAO
@@ -20,10 +21,7 @@ import io.ktor.client.plugins.DefaultRequest
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.http.URLProtocol
 import io.ktor.serialization.kotlinx.json.json
-import kmpmovies.composeapp.generated.resources.Res
-import kmpmovies.composeapp.generated.resources.tmdb_api_key
 import kotlinx.serialization.json.Json
-import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun Navigation(movieDAO: MovieDAO) {
@@ -53,10 +51,7 @@ fun Navigation(movieDAO: MovieDAO) {
 }
 
 @Composable
-private fun rememberMovieRepository(
-    movieDAO: MovieDAO,
-    apiKey: String = stringResource(Res.string.tmdb_api_key)
-): MovieRepository = remember {
+private fun rememberMovieRepository(movieDAO: MovieDAO): MovieRepository = remember {
     val client = HttpClient {
         install(ContentNegotiation) {
             json(Json {
@@ -67,7 +62,7 @@ private fun rememberMovieRepository(
             url {
                 protocol = URLProtocol.HTTPS
                 host = "api.themoviedb.org"
-                parameters.append("api_key", apiKey)
+                parameters.append("api_key", BuildConfig.TMDB_API_KEY)
             }
         }
     }
