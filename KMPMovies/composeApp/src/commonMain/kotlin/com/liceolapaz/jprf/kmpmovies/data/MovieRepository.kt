@@ -21,6 +21,10 @@ class MovieRepository(
             movieDAO.insertMovie(domainMovie)
         }
     }
+
+    suspend fun toggleFavorite(movie: Movie) {
+        movieDAO.insertMovie(movie.copy(isFavorite = !movie.isFavorite))
+    }
 }
 
 private fun RemoteMovie.toDomainMovie(): Movie {
@@ -34,6 +38,7 @@ private fun RemoteMovie.toDomainMovie(): Movie {
         originalTitle = originalTitle,
         originalLanguage = originalLanguage,
         popularity = popularity,
-        voteAverage = voteAverage
+        voteAverage = voteAverage,
+        isFavorite = false
     )
 }

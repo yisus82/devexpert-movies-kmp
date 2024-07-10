@@ -9,7 +9,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -35,6 +38,7 @@ import com.liceolapaz.jprf.kmpmovies.ui.common.LoadingIndicator
 import com.liceolapaz.jprf.kmpmovies.ui.screens.Screen
 import kmpmovies.composeapp.generated.resources.Res
 import kmpmovies.composeapp.generated.resources.back
+import kmpmovies.composeapp.generated.resources.favorite
 import kmpmovies.composeapp.generated.resources.original_language
 import kmpmovies.composeapp.generated.resources.original_title
 import kmpmovies.composeapp.generated.resources.popularity
@@ -55,6 +59,18 @@ fun DetailScreen(vm: DetailViewModel, onBack: () -> Unit) {
                     title = state.movie?.title ?: "",
                     onBack = onBack,
                     scrollBehavior = scrollBehavior)
+            },
+            floatingActionButton = {
+                state.movie?.let { movie ->
+                    FloatingActionButton(
+                        onClick = vm::onFavoriteClick
+                    ) {
+                        Icon(
+                            imageVector = if (movie.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                            contentDescription = stringResource(Res.string.favorite)
+                        )
+                    }
+                }
             }
         ) { padding ->
             LoadingIndicator(
