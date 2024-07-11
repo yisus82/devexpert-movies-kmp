@@ -1,16 +1,19 @@
 package com.liceolapaz.jprf.kmpmovies.data
 
 import com.liceolapaz.jprf.kmpmovies.data.database.MovieDAO
+import com.liceolapaz.jprf.kmpmovies.data.remote.MovieService
+import com.liceolapaz.jprf.kmpmovies.data.remote.RemoteMovie
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.onEach
 
 class MovieRepository(
     private val movieService: MovieService,
-    private val movieDAO: MovieDAO
+    private val movieDAO: MovieDAO,
+    private val regionRepository: RegionRepository
 ) {
     val movies : Flow<List<Movie>> = movieDAO.getPopularMovies().onEach { movies ->
         if (movies.isEmpty()) {
-            val popularMovies = movieService.getPopularMovies().results.map { it.toDomainMovie() }
+            val popularMovies = movieService.getPopularMovies(regionRepository.getRegion()).results.map { it.toDomainMovie() }
             popularMovies.forEach { movie -> movieDAO.insertMovie(movie) }
         }
     }

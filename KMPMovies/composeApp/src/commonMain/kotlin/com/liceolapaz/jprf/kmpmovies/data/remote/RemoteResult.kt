@@ -1,4 +1,4 @@
-package com.liceolapaz.jprf.kmpmovies.data
+package com.liceolapaz.jprf.kmpmovies.data.remote
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

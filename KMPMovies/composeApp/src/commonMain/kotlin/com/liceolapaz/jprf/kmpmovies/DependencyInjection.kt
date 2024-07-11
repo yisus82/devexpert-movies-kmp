@@ -3,9 +3,10 @@ package com.liceolapaz.jprf.kmpmovies
 import androidx.room.RoomDatabase
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import com.liceolapaz.jprf.kmpmovies.data.MovieRepository
-import com.liceolapaz.jprf.kmpmovies.data.MovieService
+import com.liceolapaz.jprf.kmpmovies.data.RegionRepository
 import com.liceolapaz.jprf.kmpmovies.data.database.MovieDAO
 import com.liceolapaz.jprf.kmpmovies.data.database.MovieDatabase
+import com.liceolapaz.jprf.kmpmovies.data.remote.MovieService
 import com.liceolapaz.jprf.kmpmovies.ui.screens.detail.DetailViewModel
 import com.liceolapaz.jprf.kmpmovies.ui.screens.home.HomeViewModel
 import io.ktor.client.HttpClient
@@ -32,6 +33,7 @@ val appModule = module {
 
 val dataModule = module {
     factoryOf(::MovieRepository)
+    factoryOf(::RegionRepository)
     factoryOf(::MovieService)
     single<HttpClient> {
         HttpClient {
