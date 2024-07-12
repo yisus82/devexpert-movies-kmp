@@ -1,27 +1,27 @@
 package com.liceolapaz.jprf.kmpmovies.ui.screens.detail
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.liceolapaz.jprf.kmpmovies.data.Movie
 import com.liceolapaz.jprf.kmpmovies.data.MovieRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class DetailViewModel(
     private val movieId: Int,
     private val movieRepository: MovieRepository
 ) : ViewModel() {
-    var state by mutableStateOf(UiState())
-        private set
+    private val _state = MutableStateFlow(UIState())
+    var state: StateFlow<UIState> = _state.asStateFlow()
 
     init {
         viewModelScope.launch {
-            state = UiState(isLoading = true)
+            _state.value = UIState(isLoading = true)
             movieRepository.getMovieById(movieId).collect { movie ->
                 if (movie != null) {
-                    state = UiState(
+                    _state.value = UIState(
                         isLoading = false,
                         movie = movie
                     )
@@ -30,13 +30,13 @@ class DetailViewModel(
         }
     }
 
-    data class UiState(
+    data class UIState(
         val isLoading: Boolean = false,
         val movie: Movie? = null
     )
 
     fun onFavoriteClick() {
-        state.movie?.let { movie ->
+        state.value.movie?.let { movie ->
             viewModelScope.launch {
                 movieRepository.toggleFavorite(movie)
             }
